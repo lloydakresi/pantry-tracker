@@ -1,92 +1,45 @@
 'use client'
-import Avatar from '@mui/material/Avatar';
-import Grid from '@mui/material/Unstable_Grid2';
-import Paper from '@mui/material/Paper';
-import Image from 'next/image';
+import React, { useState, useRef } from 'react';
+import { Camera } from 'react-camera-pro';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
-import CameraCapture from '../../components/CameraCapture';
-import FoodDialog from '../components/FoodDialog';
-import data from '../../test-data/pantry.json';
 
-export default function Page() {
-  const [food, setFood] = useState(data);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [cameraOpen, setCameraOpen] = useState(false);
-  const [newFood, setNewFood] = useState({ food: '', quantity: '', src: '' });
+const CameraPage = () => {
+  const camera = useRef(null);
+  const [image, setImage] = useState(null);
 
-  const handleDialogOpen = () => setDialogOpen(true);
-  const handleDialogClose = () => setDialogOpen(false);
-  const handleCameraOpen = () => setCameraOpen(true);
-  const handleCameraClose = () => setCameraOpen(false);
-
-  const handleChange = (event) => {
-    setNewFood({ ...newFood, [event.target.name]: event.target.value });
-  };
-
-  const handleCapture = (photo) => {
-    setNewFood({ ...newFood, src: photo });
-    handleCameraClose();
-  };
-
-  const handleSubmit = () => {
-    if (newFood.src || (newFood.food && newFood.quantity)) {
-      setFood([...food, newFood]);
-      setNewFood({ food: '', quantity: '', src: '' });
-      handleDialogClose();
-    } else {
-      alert('Please enter food details or capture an image');
+  const takePicture = () => {
+    if (camera.current) {
+      const capturedImage = camera.current.takePhoto();
+      setImage(capturedImage);
     }
   };
 
   return (
-    <>
-      <section className='flex flex-row w-full sm:w-2/6 items-center'>
-        <Avatar alt='Remy Sharpe' src='/path/to/avatar/image.jpg' />
-        <span className='block ml-2 text-xl font-bold'>Welcome, you!</span>
-      </section>
-      <section>
-        <div className='px-20 mt-20'>
-          <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            {food.map((item, index) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                <Paper style={{ padding: '8px', textAlign: 'center', backgroundColor: 'darkgrey' }}>
-                  <Image src={item.src} height={100} width={100} alt={item.food} className="rounded" />
-                  <Typography variant="h6" gutterBottom>
-                    {item.food}
-                  </Typography>
-                  <Typography variant="body2">
-                    Quantity: {item.quantity}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-        <Fab
+    <Box sx={{ flexGrow: 1, padding: 2, textAlign: 'center' }}>
+      <Typography variant="h4" gutterBottom>
+        Camera
+      </Typography>
+      <Box sx={{ margin: '0 auto', width: '100%', maxWidth: '400px' }}>
+        <Camera ref={camera} aspectRatio={4 / 3} />
+        <Button
+          variant="contained"
           color="primary"
-          aria-label="add"
-          sx={{ position: 'fixed', bottom: 16, right: 16 }}
-          onClick={handleDialogOpen}
+          onClick={takePicture}
+          sx={{ marginTop: 2 }}
         >
-          <AddIcon />
-        </Fab>
-        <FoodDialog
-          open={dialogOpen}
-          onClose={handleDialogClose}
-          onSubmit={handleSubmit}
-          newFood={newFood}
-          handleChange={handleChange}
-          handleCameraOpen={handleCameraOpen}
-        />
-        <CameraCapture
-          open={cameraOpen}
-          onClose={handleCameraClose}
-          onCapture={handleCapture}
-        />
-      </section>
-    </>
+          Take Picture
+        </Button>
+      </Box>
+      {image && (
+        <Box sx={{ marginTop: 2 }}>
+          <Typography variant="h6">Captured Image:</Typography>
+          <img src={image} alt="Captured" style={{ width: '100%' }} />
+        </Box>
+      )}
+    </Box>
   );
-}
+};
+
+export default CameraPage;
