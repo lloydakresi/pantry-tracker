@@ -1,6 +1,7 @@
 import "./globals.css";
 import { inter, righteous,raleway } from './utils/fonts'
 import Link from "next/link";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 
 export const metadata = {
   title: "Pantrify",
@@ -11,6 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${inter} ${righteous} ${raleway}`}>
+        <AppRouterCacheProvider>
         <header className="flex flex-row justify-between items-center mx-5 my-5">
           <h1 className="font-righteous font-extrabold text-4xl">Pantrify</h1>
           <nav>
@@ -26,6 +28,7 @@ export default function RootLayout({ children }) {
             <p>&copy; {new Date().getFullYear()} Pantrify. All rights reserved.</p>
           </div>
         </footer>
+        </AppRouterCacheProvider>
       </body>
     </html>
   );

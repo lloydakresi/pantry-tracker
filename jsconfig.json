@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": ".", // Sets the base directory for resolving non-relative modules
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["src/*"] // Maps @/ to the src/ directory
     }
-  }
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
